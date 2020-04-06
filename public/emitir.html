@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script
+			  src="https://code.jquery.com/jquery-1.11.0.min.js"
+			  integrity="sha256-spTpc4lvj4dOkKjrGokIrHkJgNA0xMS98Pw9N7ir9oI="
+			  crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+</head>
+<body>
+
+<div class="jumbotron text-center">
+  <h1>Video de web cam</h1>
+ 
+ 
+    <div class="row">
+
+            <div class="col-lg-6">
+                <video
+                    src=""
+                    id="video"
+                    style="width:100%;height=80%"
+                    autoplay="true"
+                ></video> 
+            </div>
+            <div class="col-lg-6">
+                <canvas id="preview"></canvas>
+                <div id="logger"></div>
+            </div>
+    </div>
+ </div>
+  
+
+<script>
+        let canvas = document.getElementById("preview");
+        let context = canvas.getContext("2d");
+        
+        canvas.width = '800px';
+        canvas.height =  '800px';
+        context.height= canvas.height;
+        context.width = canvas.width;
+
+        let video = document.getElementById("video");
+        let socket = io();
+        
+        function logger(msg){
+                $('#logger').text(msg);
+        }
+
+        function loadCam(stream){
+            video.src = window.URL.createObjectURL(stream);
+            
+            logger('Camara conectada correctamente [ok]');
+        }
+
+        function loadFail(){
+            logger('Camara no disponible! [ok]');
+        }
+
+        function viewVideo(video,context){
+            context.drawImage(video,0,0,context.width,context.height);
+        }
+
+        $(()=>{
+            navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia || navigator.msgGetUserMedia);
+
+            if(navigator.getUserMedia){
+                navigator.getUserMedia({video : true}, loadCam, loadFail);
+            }
+        });
+</script>
+
+</body>
+</html>
